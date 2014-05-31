@@ -1,0 +1,6 @@
+# pull-credit
+
+
+## License
+
+MIT
