@@ -1,3 +1,6 @@
+'use strict';
+
+
 module.exports = function (credit) {
   var buffer = new Buffer(0),
     cb, read, abort, reading,

@@ -6,7 +6,8 @@ var pull = require('pull-stream')
 var tape = require('tape')
 var randomsp = require('pull-randomly-split')
 
-tape('simple creditReader', function (t) {
+if(false) {
+tape('simple debtor', function (t) {
 
   var dr = debtor(128)
 
@@ -36,7 +37,7 @@ tape('simple creditReader', function (t) {
 
 })
 
-tape('simple creditReadable', function (t) {
+tape('simple creditor', function (t) {
   var expected = [new Buffer(32)]
   var account = 0
   pull(
@@ -53,3 +54,6 @@ tape('simple creditReadable', function (t) {
     })
   )
 })
+}
+
+

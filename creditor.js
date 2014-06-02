@@ -1,3 +1,5 @@
+'use strict';
+
 //read data in, until you have hit a threashold,
 //and call a listener with the change in credit.
 // this should be continously reading, until the buffer is full.
@@ -5,7 +7,7 @@
 // when you call read, it returns the entire buffer.
 
 module.exports = function (max, onChange) {
-  var buffer = null, ended, running
+  var buffer = null, ended, running, cb, read, abort
   function drain () {
     if(cb) {
       if(buffer) {
@@ -15,14 +17,14 @@ module.exports = function (max, onChange) {
         _cb(null, _buffer)
       } else if(ended) {
         var _cb = cb; cb = null
-        onChange(ended)
+        onChange(ended, 0)
         _cb(ended, buffer)
       }
     }
   }
 
   function start () {
-    if(running) return
+    if(running || ended) return
     running = true
     read(abort, function next (end, data) {
       if(end) {
@@ -31,13 +33,20 @@ module.exports = function (max, onChange) {
       else if(!buffer)
         buffer = data
       else
-        buffer = buffer.concat([buffer, data])
+        buffer = Buffer.concat([buffer, data])
 
-      if(buffer.length < max) {
-        console.log('read', end, data)
+      if(buffer.length > max) {
+        return read(ended = new Error('overflow'), function () {
+          buffer = null
+          drain()
+        })
+      }
+      else if(buffer.length < max && !ended)
         read(null, next)
-      } else
+      else
         running = false
+
+      drain()
     })
   }
 
